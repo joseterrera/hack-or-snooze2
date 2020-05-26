@@ -203,7 +203,7 @@ class User {
 
     this.favorites = response.data.user.favorites.map( s => new Story(s));
     this.ownStories = response.data.user.stories.map(s => new Story(s));
-    console.log(response.data.user);
+    // console.log(response.data.user);
     return this;
     
   }
@@ -238,8 +238,8 @@ class User {
         token: this.loginToken
       }
     })
-    await this.retrieveDetails();
-    // console.log(this);
+    // await this.retrieveDetails();
+    console.log(this);
     return this;
   }
 
