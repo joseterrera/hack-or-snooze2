@@ -21,3 +21,55 @@
       localStorage.setItem("username", currentUser.username);
     }
   }
+
+  function toggleHideShow(x) {
+    // var x = document.getElementById("myDIV");
+    if (x.style.display === "none") {
+      x.style.display = "block";
+      console.log('here');
+    } else {
+      console.log('there')
+      x.style.display = "none";
+
+    }
+  }
+
+  function empty(el) {
+    while(el.firstChild)
+    el.removeChild(el.firstChild);
+
+  }
+
+
+
+
+
+
+let slideOpen = true;
+let heightChecked = false;
+let initHeight = 0;
+let intval = null;
+
+
+function slideToggle(toggleContainer) {
+  // var mdiv = document.getElementById('mdiv');
+  if(!heightChecked) {
+    console.log('one', toggleContainer)
+    //offsetHeight returns height of element including borders paddings, etc
+      initHeight = toggleContainer.offsetHeight;
+      heightChecked = true;
+  }
+  if(slideOpen) {
+      slideOpen = false;
+    console.log('two', toggleContainer)
+
+     return toggleContainer.style.height = '0px';
+  }
+  else {
+      slideOpen = true;
+      return toggleContainer.style.height = initHeight + 'px';
+  }
+}
+const mdiv =document.getElementById('mdiv');
+// slideToggle(mdiv);
+console.log(mdiv.offsetHeight);

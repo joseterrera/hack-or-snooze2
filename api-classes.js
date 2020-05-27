@@ -1,4 +1,4 @@
-const BASE_URL = "https://hack-or-snooze-v3.herokuapp.com";
+// const BASE_URL = "https://hack-or-snooze-v3.herokuapp.com";
 
 /**
  * This class maintains the list of individual Story instances
@@ -238,7 +238,7 @@ class User {
         token: this.loginToken
       }
     })
-    // await this.retrieveDetails();
+    await this.retrieveDetails();
     console.log(this);
     return this;
   }
