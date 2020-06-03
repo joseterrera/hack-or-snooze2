@@ -41,13 +41,26 @@
   }
 
 
+  function hideEl(el) {
+    el.style.display = "none";
+  }
+
+  function showEl(el) {
+    if (el.style.display === "none") {
+      el.style.display = "block";
+    }
+
+  }
 
 
 
 
-let slideOpen = true;
+
+
+let slideOpen = false;
 let heightChecked = false;
 let initHeight = 0;
+let openHeight = 120;
 let intval = null;
 
 
@@ -57,6 +70,7 @@ function slideToggle(toggleContainer) {
     console.log('one', toggleContainer)
     //offsetHeight returns height of element including borders paddings, etc
       initHeight = toggleContainer.offsetHeight;
+      console.log('init', initHeight)
       heightChecked = true;
   }
   if(slideOpen) {
@@ -67,9 +81,16 @@ function slideToggle(toggleContainer) {
   }
   else {
       slideOpen = true;
-      return toggleContainer.style.height = initHeight + 'px';
+      return toggleContainer.style.height = 120 + 'px';
   }
 }
 const mdiv =document.getElementById('mdiv');
-// slideToggle(mdiv);
+
+const mbtn = document.querySelector('#mbtn');
+
+mbtn.addEventListener('click', () => {
+  slideToggle(mdiv);
+
+})
+
 console.log(mdiv.offsetHeight);

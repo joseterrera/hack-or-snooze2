@@ -44,8 +44,6 @@ $(async function() {
   const trashCan = document.querySelector('.trash-can');
 
 
- 
-
   await checkIfLoggedIn();
   // console.log('curr', currentUser)
 
@@ -54,7 +52,6 @@ $(async function() {
    *  Event listener for logging in.
    *  If successfully we will setup the user instance
    */
-
    loginForm.addEventListener('submit', async function(evt) {
     evt.preventDefault();
     const username = document.querySelector('#login-username').value;
@@ -66,7 +63,6 @@ $(async function() {
     syncCurrentUserToLocalStorage();
     //update page for users that successfully log in.
     loginAndSubmitForm();
-
    });
 
   /**
@@ -96,13 +92,15 @@ $(async function() {
 
   /**
    * Event Handler for Clicking Login
+   * It will show both login and signup forms
+   * and hide stories.
    */
   navLogin.addEventListener('click', function() {
-      // Show the Login and Create Account Forms
       $loginForm.slideToggle();
       $createAccountForm.slideToggle();
       toggleHideShow(allStoriesList);
-  })
+  });
+
 
   function addFavorites() {
     // empty out the list by default
@@ -122,21 +120,6 @@ $(async function() {
   }
 
 
-  // function addFavorites() {
-  //   empty(favoritedStories);
-  //   // const orderedList = document.createElement= 'ol';
-  //   if(currentUser.favorites.length === 0) {
-  //     favoritedStories.insertAdjacentHTML('beforebegin', `<h5>${currentUser.name} has not favorited any articles yet!</h5>`)
-  //   } else {
-  //     // favoritedStories.append(orderedList)
-  //     for (let story of currentUser.favorites) {
-  //       let favoritedStoriesHTML = generateStoryHTML(story, false);
-  //       console.log(favoritedStories);
-  //       favoritedStories.insertAdjacentHTML('beforebegin', favoritedStoriesHTML);
-  //     }
-  //   }
-  // }
-
   function addMyStories() {
     $ownStories.empty();
     if(currentUser.ownStories.length === 0) {
@@ -151,48 +134,58 @@ $(async function() {
   }
 
 
-  function addUserStoriesAndFaves(parameter, boolean) {
-    parameter.empty();
-    if(currentUser.ownStories.length === 0) {
-      parameter.append(`<h5>${currentUser.name} has not written any articles yet</h5>`)
-    } else {
-      for(let story of currentUser.ownStories) {
-        let ownStoryHTML = generateStoryHTML(story, boolean);
-        parameter.append(ownStoryHTML);
-      }
-    }
-    parameter.show();
-  }
+  // function addUserStoriesAndFaves(parameter, boolean) {
+  //   parameter.empty();
+  //   if(currentUser.ownStories.length === 0) {
+  //     parameter.append(`<h5>${currentUser.name} has not written any articles yet</h5>`)
+  //   } else {
+  //     for(let story of currentUser.ownStories) {
+  //       let ownStoryHTML = generateStoryHTML(story, boolean);
+  //       parameter.append(ownStoryHTML);
+  //     }
+  //   }
+  //   parameter.show();
+  // }
 
 
   /**
    * Display submit form when clicking on nav link
    */
-  $navSubmit.on('click', function() {
+
+  navSubmit.addEventListener('click', function() {
     if(currentUser) {
       hideElements();
       $submitForm.slideToggle();
-      $allStoriesList.show();
-
+      showEl(allStoriesList);
     }
   })
 
-  // $navFavorites.on('click', function() {
-  //   hideElements();
+  // $navSubmit.on('click', function() {
   //   if(currentUser) {
-  //     generateFaves();
-  //     $favoritedStories.show();
+  //     hideElements();
+  //     $submitForm.slideToggle();
+  //     $allStoriesList.show();
+
   //   }
   // })
 
 
-  $navFavorites.on('click', function() {
+  navFavorites.addEventListener('click', function() {
     hideElements();
-    if (currentUser) {
+    if(currentUser) {
       addFavorites();
-      $favoritedStories.show();
+      showEl(favoritedStories);
     }
-  });
+  })
+
+
+  // $navFavorites.on('click', function() {
+  //   hideElements();
+  //   if (currentUser) {
+  //     addFavorites();
+  //     $favoritedStories.show();
+  //   }
+  // });
 
 
   $body.on('click', "#nav-my-stories", async function() {
@@ -324,23 +317,17 @@ $(async function() {
   }
 
   /**
-   * A rendering function to run to reset the forms and hide the login info
+   * A rendering function to run to reset the forms,
+   * show the stories and the nav for logged in users`
    */
 
   function loginAndSubmitForm() {
-    // hide the forms for logging in and signing up
-    $loginForm.hide();
-    $createAccountForm.hide();
-
-    // reset those forms
-    $loginForm.trigger("reset");
-    $createAccountForm.trigger("reset");
-
-    // show the stories
-    $allStoriesList.show();
-    $userProfiles.hide();
-
-    // update the navigation bar
+    hideEl(loginForm);
+    hideEl(createAccountForm);
+    loginForm.reset();
+    createAccountForm.reset();
+    showEl(allStoriesList);
+    hideEl(userProfiles);
     showNavForLoggedInUser();
   }
 
@@ -357,7 +344,8 @@ $(async function() {
     // update our global variable
     storyList = storyListInstance;
     // empty out that part of the page
-    $allStoriesList.empty();
+    // $allStoriesList.empty();
+    empty(allStoriesList);
 
     // loop through all of our stories and generate HTML for them
     for (let story of storyList.stories) {
@@ -367,27 +355,19 @@ $(async function() {
   }
 
 /**
- * Create a new set,
+ * Create a new set, 
+ * return a boolean if is or isn't a fav story
  */
   function isFavorite(story) {
-    // let favStoryIds = new Set();
+    let favStoryIds = new Set();
     if (currentUser) {
       favStoryIds = new Set(currentUser.favorites.map(obj => obj.storyId));
       
     }
-    console.log(favStoryIds);
+    // console.log(favStoryIds);
     console.log('fav', favStoryIds.has(story.storyId))
     return favStoryIds.has(story.storyId);
   }
-
-  // function isFavorite(story) {
-  //     let favStoryIds = new Set();
-  //     if (currentUser) {
-  //       favStoryIds = new Set(currentUser.favorites.map(obj => obj.storyId))
-  //     }
-
-  //     return favStoryIds.has(story.storyId);
-  // }
 
   /**
    * A function to render HTML for an individual Story instance
@@ -424,63 +404,48 @@ $(async function() {
   }
   // document.querySelectorAll('.star').forEach(item => {
   //   item.addEventListener('click', async function(e) {
-  //     if(currentUser) {
-  //       const $tgt = $(e.target);
-  //       const $closestLi = $tgt.closest('li');
-  //       const storyId = $closestLi.attr("id");
-  
-  //       if($tgt.hasClass("fas")) {
-  //         await currentUser.removeFavorite(storyId);
-  //         $tgt.closest('i').toggleClass('fas far');
-  //       } else {
-  //         await currentUser.addFavorite(storyId);
-  //         $tgt.closest('i').toggleClass('fas far')
-  //       }
-  //     }
-  //   }
-  // )})
+  $('.articles-container').on('click', '.star', async function(evt) {
+      if(currentUser) {
+        const tgt = evt.target;
+        //get closest ancestor
+        const closestLi = tgt.closest('li'); 
+        const storyId = closestLi.attr("id");
 
-  $('.articles-container').on('click', '.star', async function(e) {
-    if(currentUser) {
-      const $tgt = $(e.target);
-      const $closestLi = $tgt.closest('li');
-      const storyId = $closestLi.attr("id");
-
-      if($tgt.hasClass("fas")) {
-        await currentUser.removeFavorite(storyId);
-        $tgt.closest('i').toggleClass('fas far');
-      } else {
-        await currentUser.addFavorite(storyId);
-        $tgt.closest('i').toggleClass('fas far')
+        if(tgt.classList.contains("fas")) {
+          await currentUser.removeFavorite(storyId);
+          tgt.closest('i').toggleClass('fas far');
+        } else {
+          await currentUser.addFavorite(storyId);
+          tgt.closest('i').classList.toggle('fas far');
+        }
       }
-    }
-  })
+    })
+
 
   /* hide all elements in elementsArr */
 
   function hideElements() {
     const elementsArr = [
-      $submitForm,
-      $allStoriesList,
-      $filteredArticles,
-      $ownStories,
-      $loginForm,
-      $createAccountForm,
-      $favoritedStories,
-      $userProfiles
+      submitForm,
+      allStoriesList,
+      filteredArticles,
+      ownStories,
+      loginForm,
+      createAccountForm,
+      favoritedStories,
+      userProfiles
     ];
-    elementsArr.forEach($elem => $elem.hide());
+    elementsArr.forEach(elem => hideEl(elem));
   }
 
   function showNavForLoggedInUser() {
-    $navLogin.hide();
-    $navLogOut.show();
-    $mainNavLinks.toggleClass('hidden');
-    $navUserProfile.toggleClass('hidden');
-    $navWelcome.show();
-    $navLogOut.show();
-    $navUserProfile.toggleClass('hidden')
-    $navUserProfile.text(currentUser.username);
+    navLogin.classList.toggle('hidden')
+    navLogOut.classList.toggle('hidden');
+    mainNavLinks.classList.toggle('hidden');
+    navUserProfile.classList.toggle('hidden');
+    navWelcome.classList.toggle('hidden');
+    navUserProfile.classList.toggle('hidden')
+    navUserProfile.textContent = currentUser.username;
   }
 
 });
