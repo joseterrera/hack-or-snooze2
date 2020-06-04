@@ -227,10 +227,13 @@ $(async function() {
    * Event Handler for Deleting a Single Story
    */
 
-  $ownStories.on("click", ".trash-can", async function(evt) {
-    // get the Story's ID
-    const $closestLi = $(evt.target).closest("li");
-    const storyId = $closestLi.attr("id");
+  const ownStoriesLi = document.querySelectorAll('#my-articles li');
+  for(let i = 0; i < ownStoriesLi.length; i++) {
+    let trashCan = ownStoriesLi[i].querySelector('.trash-can');
+    trashCan.addEventListener('click', async function(evt) { 
+          // get the Story's ID
+    const closestLi = (evt.target).closest("li");
+    const storyId = closestLi.getAttribute("id");
 
     // remove the story from the API
     await storyList.removeStory(currentUser, storyId);
@@ -243,14 +246,37 @@ $(async function() {
     // $ownStories.show()
 
     // ...except the story list
-    $allStoriesList.show();
+    showEl(allStoriesList);
+    // $allStoriesList.show();
+    })
+  }
+
+  $ownStories.on("click", ".trash-can", async function(evt) {
+    // get the Story's ID
+    const closestLi = (evt.target).closest("li");
+    const storyId = closestLi.getAttribute("id");
+
+    // remove the story from the API
+    await storyList.removeStory(currentUser, storyId);
+
+    // re-generate the story list
+    await generateStories();
+
+    // hide everyhing
+    hideElements();
+    // $ownStories.show()
+
+    // ...except the story list
+    showEl(allStoriesList);
+    // $allStoriesList.show();
   });
 
 
   navUserProfile.addEventListener('click', function() { 
     // console.log(currentUser)
     hideElements();
-    $userProfiles.show();
+    // $userProfiles.show();
+    showEl(userProfiles);
     profileName.textContent = `Name: ${currentUser.name}`;
     // show your username
     profileUsername.textContent = `Username: ${currentUser.username}`;
@@ -277,7 +303,7 @@ $(async function() {
 
 
   // async function handleSubmit($submitForm) {
-    $submitForm.on('submit', async function(event) {
+    submitForm.addEventListener('submit', async function(event) {
       if(!currentUser) {
         showNavForLoggedInUser()
         return
