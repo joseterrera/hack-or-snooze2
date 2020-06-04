@@ -107,7 +107,8 @@ $(async function() {
 
   function addFavorites() {
     // empty out the list by default
-    $favoritedStories.empty();
+    // $favoritedStories.empty();
+    empty(favoritedStories);
 
     // if the user has no favorites
     if (currentUser.favorites.length === 0) {
@@ -124,7 +125,8 @@ $(async function() {
 
 
   function addMyStories() {
-    $ownStories.empty();
+    // $ownStories.empty();
+    empty(ownStories);
     if(currentUser.ownStories.length === 0) {
       $ownStories.append(`<h5>${currentUser.name} has not written any articles yet</h5>`)
     } else {
@@ -133,7 +135,8 @@ $(async function() {
         $ownStories.append(ownStoryHTML);
       }
     }
-    $ownStories.show();
+    // $ownStories.show();
+    showEl(ownStories);
   }
 
 
@@ -197,17 +200,28 @@ $(async function() {
   //   }
   // });
 
-
-  $body.on('click', "#nav-my-stories", async function() {
+  document.querySelector('#nav-my-stories').addEventListener('click', async function() {
     hideElements();
-    $userProfiles.hide();
+    // $userProfiles.hide();
     if(currentUser) {
       await generateStories();
       addMyStories()
-    
-      $ownStories.show()
+      showEl(ownStories)
+      // $ownStories.show()
     }
   })
+
+
+  // $body.on('click', "#nav-my-stories", async function() {
+  //   hideElements();
+  //   // $userProfiles.hide();
+  //   if(currentUser) {
+  //     await generateStories();
+  //     addMyStories()
+  //     showEl(ownStories)
+  //     // $ownStories.show()
+  //   }
+  // })
 
   /**
    * Event Handler for Deleting a Single Story
@@ -233,7 +247,7 @@ $(async function() {
   });
 
 
-  $body.on('click', "#nav-user-profile" , function() {
+  navUserProfile.addEventListener('click', function() { 
     // console.log(currentUser)
     hideElements();
     $userProfiles.show();
@@ -246,6 +260,20 @@ $(async function() {
     ;
     
   })
+
+  // $body.on('click', "#nav-user-profile" , function() {
+  //   // console.log(currentUser)
+  //   hideElements();
+  //   $userProfiles.show();
+  //   profileName.textContent = `Name: ${currentUser.name}`;
+  //   // show your username
+  //   profileUsername.textContent = `Username: ${currentUser.username}`;
+  //   // format and display the account creation date
+  //   profileAccountDate.textContent = 
+  //     `Account Created: ${currentUser.createdAt.slice(0, 10)}`
+  //   ;
+    
+  // })
 
 
   // async function handleSubmit($submitForm) {
@@ -376,7 +404,7 @@ $(async function() {
       
     }
     // console.log(favStoryIds);
-    console.log('fav', favStoryIds.has(story.storyId))
+    // console.log('fav', favStoryIds.has(story.storyId))
     return favStoryIds.has(story.storyId);
   }
 
@@ -445,12 +473,13 @@ $(async function() {
     // })
 
 
-const containers = document.querySelectorAll('.articles-container li');
-// console.log(containers.length)
+const containers = document.querySelectorAll('#all-articles-list li');
+console.log('length', containers.length)
 for(let i = 0; i < containers.length; i++) {
   let star = containers[i].querySelector('.star');
-  // console.log(star);
+  console.log(star);
   star.addEventListener('click', async function(evt) {
+    console.log('hee')
     if(currentUser) {
       const tgt = evt.target;
       console.log(tgt);
@@ -463,8 +492,11 @@ for(let i = 0; i < containers.length; i++) {
       if(tgt.classList.contains("fas")) {
         await currentUser.removeFavorite(storyId);
         tgt.closest('i').classList.toggle('fas');
-      } else {
+        tgt.closest('i').classList.toggle('far');
+
+      } else  {
         await currentUser.addFavorite(storyId);
+        tgt.closest('i').classList.toggle('far');
         tgt.closest('i').classList.toggle('fas');
       }
     }
