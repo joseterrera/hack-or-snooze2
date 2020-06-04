@@ -228,3 +228,19 @@ form > hr {
     margin: 8px auto;
   }
 }
+
+
+/* 
+#mdiv {
+  height: 0px;
+  width: 200px;
+  margin-top: 20px;
+  background-color: green;
+  color: red;
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  -webkit-transition: all 1s ease-in-out;
+  transition: all 1s ease-in-out;
+  overflow-y: hidden;
+} */

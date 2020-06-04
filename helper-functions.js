@@ -57,40 +57,47 @@
 
 
 
-let slideOpen = false;
+let slideOpen = true;
 let heightChecked = false;
 let initHeight = 0;
 let openHeight = 120;
 let intval = null;
 
 
-function slideToggle(toggleContainer) {
-  // var mdiv = document.getElementById('mdiv');
-  if(!heightChecked) {
-    console.log('one', toggleContainer)
+function slideToggle(el) {
+  var elem = document.querySelector(el);
+  console.log('elem', elem);
+  initHeight = elem.offsetHeight;
+  // if(!heightChecked) {
+    // console.log('one', toggleContainer)
     //offsetHeight returns height of element including borders paddings, etc
-      initHeight = toggleContainer.offsetHeight;
-      console.log('init', initHeight)
-      heightChecked = true;
-  }
-  if(slideOpen) {
+    // console.log('init', initHeight)
+    // heightChecked = true;
+  // }
+  if(initHeight > 0) {
       slideOpen = false;
-    console.log('two', toggleContainer)
-
-     return toggleContainer.style.height = '0px';
+    // console.log('two', toggleContainer)
+    elem.style.display = 'none';
+    elem.classList.toggle('hidden');
+     elem.style.height = '0px';
   }
   else {
       slideOpen = true;
-      return toggleContainer.style.height = 120 + 'px';
+      elem.style.display = 'block';
+      elem.classList.toggle('hidden');
+      elem.style.height = 100 + '%';
   }
 }
-const mdiv =document.getElementById('mdiv');
 
-const mbtn = document.querySelector('#mbtn');
 
-mbtn.addEventListener('click', () => {
-  slideToggle(mdiv);
+//example of slide toggle
+// const mdiv =document.getElementById('mdiv');
 
-})
+// const mbtn = document.querySelector('#mbtn');
 
-console.log(mdiv.offsetHeight);
+// mbtn.addEventListener('click', () => {
+//   slideToggle(mdiv);
+
+// })
+
+// console.log(mdiv.offsetHeight);

@@ -96,8 +96,11 @@ $(async function() {
    * and hide stories.
    */
   navLogin.addEventListener('click', function() {
-      $loginForm.slideToggle();
-      $createAccountForm.slideToggle();
+      // $loginForm.slideToggle();
+      // slideToggle(loginForm);
+      loginForm.classList.remove('hidden');
+      createAccountForm.classList.remove('hidden');
+      // $createAccountForm.slideToggle();
       toggleHideShow(allStoriesList);
   });
 
@@ -152,10 +155,17 @@ $(async function() {
    * Display submit form when clicking on nav link
    */
 
-  navSubmit.addEventListener('click', function() {
+  navSubmit.addEventListener('click', function(e) {
     if(currentUser) {
       hideElements();
-      $submitForm.slideToggle();
+      // console.log('hee')
+      // $submitForm.slideToggle();
+      // submitForm.style.display = 'block';
+      // submitForm.style.color = 'red';
+      // slideToggle(submitForm);
+      // submitForm.classList.toggle('hidden');
+      slideToggle("#submit-form");
+      // showEl(submitForm);
       showEl(allStoriesList);
     }
   })
@@ -260,7 +270,8 @@ $(async function() {
         url
       })
       await generateStories();
-      $submitForm.slideUp("slow");
+      // $submitForm.slideUp("slow");
+      slideToggle('#submit-form');
       submitForm.reset();
 
 
@@ -404,22 +415,81 @@ $(async function() {
   }
   // document.querySelectorAll('.star').forEach(item => {
   //   item.addEventListener('click', async function(e) {
-  $('.articles-container').on('click', '.star', async function(evt) {
-      if(currentUser) {
-        const tgt = evt.target;
-        //get closest ancestor
-        const closestLi = tgt.closest('li'); 
-        const storyId = closestLi.attr("id");
+    // const containers = document.querySelectorAll('.articles-container');
+    // for(let i = 0; i < containers.length; i++) {
+    //   let star = containers[i].querySelector('.star');
+    //   star.addEventListener('click', async function(evt) { /* event handling here */ })
+    // }
 
-        if(tgt.classList.contains("fas")) {
-          await currentUser.removeFavorite(storyId);
-          tgt.closest('i').toggleClass('fas far');
-        } else {
-          await currentUser.addFavorite(storyId);
-          tgt.closest('i').classList.toggle('fas far');
-        }
+    // articlesContainer.forEach(container => {
+    //   let star = container.querySelector('.star');
+    //   star.addEventListener('click', async function() {
+    //     if(currentUser) {
+    //       const tgt = evt.target;
+    //       //get closest ancestor
+    //       const closestLi = tgt.closest('li'); 
+    //       // console.log(closestLi);
+    //       const storyId = closestLi.getAttribute("id");
+    //       console.log(storyId);
+  
+    //       if(tgt.classList.contains("fas")) {
+    //         await currentUser.removeFavorite(storyId);
+    //         tgt.closest('i').classList.toggle('fas');
+    //       } else {
+    //         await currentUser.addFavorite(storyId);
+    //         tgt.closest('i').classList.toggle('fas');
+    //       }
+    //     }
+    //   })
+
+    // })
+
+
+const containers = document.querySelectorAll('.articles-container li');
+// console.log(containers.length)
+for(let i = 0; i < containers.length; i++) {
+  let star = containers[i].querySelector('.star');
+  // console.log(star);
+  star.addEventListener('click', async function(evt) {
+    if(currentUser) {
+      const tgt = evt.target;
+      console.log(tgt);
+      //get closest ancestor
+      const closestLi = tgt.closest('li'); 
+      // console.log(closestLi);
+      const storyId = closestLi.getAttribute("id");
+      // console.log(storyId);
+
+      if(tgt.classList.contains("fas")) {
+        await currentUser.removeFavorite(storyId);
+        tgt.closest('i').classList.toggle('fas');
+      } else {
+        await currentUser.addFavorite(storyId);
+        tgt.closest('i').classList.toggle('fas');
       }
-    })
+    }
+  })
+}
+
+
+  // $('.articles-container').on('click', '.star', async function(evt) {
+  //     if(currentUser) {
+  //       const tgt = evt.target;
+  //       //get closest ancestor
+  //       const closestLi = tgt.closest('li'); 
+  //       // console.log(closestLi);
+  //       const storyId = closestLi.getAttribute("id");
+  //       console.log(storyId);
+
+  //       if(tgt.classList.contains("fas")) {
+  //         await currentUser.removeFavorite(storyId);
+  //         tgt.closest('i').classList.toggle('fas');
+  //       } else {
+  //         await currentUser.addFavorite(storyId);
+  //         tgt.closest('i').classList.toggle('fas');
+  //       }
+  //     }
+  //   })
 
 
   /* hide all elements in elementsArr */
