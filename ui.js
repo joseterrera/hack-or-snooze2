@@ -1,22 +1,22 @@
 $(async function() {
   // cache some selectors we'll be using quite a bit
-  const $body = $("body");
+  // const $body = $("body");
   const $allStoriesList = $("#all-articles-list");
-  const $submitForm = $("#submit-form");
-  const $filteredArticles = $("#filtered-articles");
-  const $loginForm = $("#login-form");
-  const $createAccountForm = $("#create-account-form");
+  // const $submitForm = $("#submit-form");
+  // const $filteredArticles = $("#filtered-articles");
+  // const $loginForm = $("#login-form");
+  // const $createAccountForm = $("#create-account-form");
   const $ownStories = $("#my-articles");
-  const $navLogin = $("#nav-login");
-  const $navLogOut = $("#nav-logout");
+  // const $navLogin = $("#nav-login");
+  // const $navLogOut = $("#nav-logout");
 
-  const $mainNavLinks = $(".main-nav-links");
-  const $navUserProfile = $("#nav-user-profile");
-  const $navWelcome = $('#nav-welcome');
-  const $navSubmit = $('#nav-submit');
-  const $navFavorites = $("#nav-favorites");
+  // const $mainNavLinks = $(".main-nav-links");
+  // const $navUserProfile = $("#nav-user-profile");
+  // const $navWelcome = $('#nav-welcome');
+  // const $navSubmit = $('#nav-submit');
+  // const $navFavorites = $("#nav-favorites");
   const $favoritedStories = $("#favorited-articles");
-  const $userProfiles = $('#user-profile');
+  // const $userProfiles = $('#user-profile');
 
   const navAll = document.querySelectorAll('#nav-all');
   const body = document.querySelector('body');
@@ -96,18 +96,14 @@ $(async function() {
    * and hide stories.
    */
   navLogin.addEventListener('click', function() {
-      // $loginForm.slideToggle();
-      // slideToggle(loginForm);
       loginForm.classList.remove('hidden');
       createAccountForm.classList.remove('hidden');
-      // $createAccountForm.slideToggle();
       toggleHideShow(allStoriesList);
   });
 
 
   function addFavorites() {
     // empty out the list by default
-    // $favoritedStories.empty();
     empty(favoritedStories);
 
     // if the user has no favorites
@@ -125,7 +121,6 @@ $(async function() {
 
 
   function addMyStories() {
-    // $ownStories.empty();
     empty(ownStories);
     if(currentUser.ownStories.length === 0) {
       $ownStories.append(`<h5>${currentUser.name} has not written any articles yet</h5>`)
@@ -135,24 +130,8 @@ $(async function() {
         $ownStories.append(ownStoryHTML);
       }
     }
-    // $ownStories.show();
     showEl(ownStories);
   }
-
-
-  // function addUserStoriesAndFaves(parameter, boolean) {
-  //   parameter.empty();
-  //   if(currentUser.ownStories.length === 0) {
-  //     parameter.append(`<h5>${currentUser.name} has not written any articles yet</h5>`)
-  //   } else {
-  //     for(let story of currentUser.ownStories) {
-  //       let ownStoryHTML = generateStoryHTML(story, boolean);
-  //       parameter.append(ownStoryHTML);
-  //     }
-  //   }
-  //   parameter.show();
-  // }
-
 
   /**
    * Display submit form when clicking on nav link
