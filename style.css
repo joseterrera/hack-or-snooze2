@@ -26,9 +26,13 @@ a {
   color: inherit;
 }
 
-a:hover {
-  text-decoration: underline;
+a.article-link {
+  margin-left: 10px;
 }
+
+/* a:hover {
+  text-decoration: underline;
+} */
 
 
 
@@ -142,6 +146,14 @@ form > hr {
   margin: 10px 0;
   cursor: pointer;
 }
+
+.articles-list li {
+  color: gray;
+  font-size: 0.8rem;
+  margin: 10px 0;
+  cursor: pointer;
+}
+
 
 .star,
 .trash-can,

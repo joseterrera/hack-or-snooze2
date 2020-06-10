@@ -392,10 +392,14 @@ $(async function() {
     empty(allStoriesList);
 
     // loop through all of our stories and generate HTML for them
+    const ul = document.createElement('a');
     for (let story of storyList.stories) {
       const result = generateStoryHTML(story);
-      $allStoriesList.append(result);
+      // $allStoriesList.append(result);
+      console.log(result);
+      ul.appendChild(result);
     }
+    allStoriesList.appendChild(ul);
   }
 
 /**
@@ -422,27 +426,65 @@ $(async function() {
     // let starType = isFavorite(story) ? 'fas' : 'far'
     let starType = isFavorite(story) ? "fas" : "far";
     //trash can that only displays under currentUser's stories
-    const trashCanIcon = isOwnStory
-    ? `<span class="trash-can">
-        <i class="fas fa-trash-alt"></i>
-      </span>`
-    : "";
+    // const trashCanIcon = isOwnStory
+    // ? `<span class="trash-can">
+    //     <i class="fas fa-trash-alt"></i>
+    //   </span>`
+    // : "";
+
+    let trashEl = document.createElement('span');
+    trashEl.className = 'trash-can';
+    let itrash = document.createElement('i');
+    itrash.className = 'fas fa-trash-alt';
+    trashEl.appendChild(itrash);
+    let noTrash = document.createElement('span');
+
+    let trashCanIcon = isOwnStory ? trashEl : noTrash;
 
     // render story markup
-    const storyMarkup = (`
-      <li id="${story.storyId}">
-      ${trashCanIcon}
-        <span class="star">
-          <i class="${starType} fa-star"></i>
-        </span>
-        <a class="article-link" href="${story.url}" target="a_blank">
-          <strong>${story.title}</strong>
-        </a>
-        <small class="article-author">by ${story.author}</small>
-        <small class="article-hostname ${hostName}">(${hostName})</small>
-        <small class="article-username">posted by ${story.username}</small>
-      </li>
-    `);
+    let storyMarkup = document.createElement('li');
+    let star = document.createElement('span');
+    star.className = 'star';
+    storyMarkup.id = story.storyId;
+    let iTag = document.createElement('i');
+    iTag.className = `fa-star ${starType}`;
+    star.appendChild(iTag);
+    let aTag = document.createElement('a');
+    aTag.className ='article-link';
+    aTag.href = story.url;
+    aTag.setAttribute('target', 'a_blank');
+    let strongEl = document.createElement('strong');
+    strongEl.innerText = story.title;
+    storyMarkup.appendChild(trashCanIcon);
+    storyMarkup.appendChild(star)
+    storyMarkup.appendChild(aTag);
+    aTag.appendChild(strongEl);
+    const smallAuthor = document.createElement('small');
+    smallAuthor.className = 'article-author';
+    smallAuthor.innerText = `by ${story.author} `;
+    const smallHostname = document.createElement('small');
+    smallHostname.className = `article-hostname ${hostName}`;
+    smallHostname.innerText = hostName;
+    const smallUsername = document.createElement('small');
+    smallUsername.className = 'article-username';
+    smallUsername.innerText = `posted by ${story.username}`;
+    storyMarkup.append(smallAuthor, smallHostname, smallUsername);
+
+    // let storyMarkup;
+    // storyMarkup = (`
+    //   <li id="${story.storyId}">
+    //   ${trashCanIcon}
+    //     <span class="star">
+    //       <i class="${starType} fa-star"></i>
+    //     </span>
+    //     <a class="article-link" href="${story.url}" target="a_blank">
+    //       <strong>${story.title}</strong>
+    //     </a>
+    //     <small class="article-author">by ${story.author}</small>
+    //     <small class="article-hostname ${hostName}">(${hostName})</small>
+    //     <small class="article-username">posted by ${story.username}</small>
+    //   </li>
+    // `);
     // console.log(storyMarkup);
     return storyMarkup;
   }
@@ -478,11 +520,11 @@ $(async function() {
     // })
 
 
-const containers = document.querySelectorAll('#all-articles-list li');
-console.log('length', containers.length)
-for(let i = 0; i < containers.length; i++) {
-  let star = containers[i].querySelector('.star');
-  console.log(star);
+const articlesLi = document.querySelectorAll('#all-articles-list li');
+// console.log('length', articlesLi.length)
+for(let i = 0; i < articlesLi.length; i++) {
+  let star = articlesLi[i].querySelector('.star');
+  // console.log(star);
   star.addEventListener('click', async function(evt) {
     console.log('hee')
     if(currentUser) {
