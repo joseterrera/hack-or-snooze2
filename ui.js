@@ -397,9 +397,10 @@ $(async function() {
       const result = generateStoryHTML(story);
       // $allStoriesList.append(result);
       console.log(result);
-      ul.appendChild(result);
+      // ul.appendChild(result);
+      allStoriesList.appendChild(result);
     }
-    allStoriesList.appendChild(ul);
+    // allStoriesList.appendChild(ul);
   }
 
 /**
@@ -469,55 +470,9 @@ $(async function() {
     smallUsername.className = 'article-username';
     smallUsername.innerText = `posted by ${story.username}`;
     storyMarkup.append(smallAuthor, smallHostname, smallUsername);
-
-    // let storyMarkup;
-    // storyMarkup = (`
-    //   <li id="${story.storyId}">
-    //   ${trashCanIcon}
-    //     <span class="star">
-    //       <i class="${starType} fa-star"></i>
-    //     </span>
-    //     <a class="article-link" href="${story.url}" target="a_blank">
-    //       <strong>${story.title}</strong>
-    //     </a>
-    //     <small class="article-author">by ${story.author}</small>
-    //     <small class="article-hostname ${hostName}">(${hostName})</small>
-    //     <small class="article-username">posted by ${story.username}</small>
-    //   </li>
-    // `);
-    // console.log(storyMarkup);
     return storyMarkup;
   }
-  // document.querySelectorAll('.star').forEach(item => {
-  //   item.addEventListener('click', async function(e) {
-    // const containers = document.querySelectorAll('.articles-container');
-    // for(let i = 0; i < containers.length; i++) {
-    //   let star = containers[i].querySelector('.star');
-    //   star.addEventListener('click', async function(evt) { /* event handling here */ })
-    // }
-
-    // articlesContainer.forEach(container => {
-    //   let star = container.querySelector('.star');
-    //   star.addEventListener('click', async function() {
-    //     if(currentUser) {
-    //       const tgt = evt.target;
-    //       //get closest ancestor
-    //       const closestLi = tgt.closest('li'); 
-    //       // console.log(closestLi);
-    //       const storyId = closestLi.getAttribute("id");
-    //       console.log(storyId);
-  
-    //       if(tgt.classList.contains("fas")) {
-    //         await currentUser.removeFavorite(storyId);
-    //         tgt.closest('i').classList.toggle('fas');
-    //       } else {
-    //         await currentUser.addFavorite(storyId);
-    //         tgt.closest('i').classList.toggle('fas');
-    //       }
-    //     }
-    //   })
-
-    // })
+ 
 
 
 const articlesLi = document.querySelectorAll('#all-articles-list li');
@@ -549,27 +504,6 @@ for(let i = 0; i < articlesLi.length; i++) {
     }
   })
 }
-
-
-  // $('.articles-container').on('click', '.star', async function(evt) {
-  //     if(currentUser) {
-  //       const tgt = evt.target;
-  //       //get closest ancestor
-  //       const closestLi = tgt.closest('li'); 
-  //       // console.log(closestLi);
-  //       const storyId = closestLi.getAttribute("id");
-  //       console.log(storyId);
-
-  //       if(tgt.classList.contains("fas")) {
-  //         await currentUser.removeFavorite(storyId);
-  //         tgt.closest('i').classList.toggle('fas');
-  //       } else {
-  //         await currentUser.addFavorite(storyId);
-  //         tgt.closest('i').classList.toggle('fas');
-  //       }
-  //     }
-  //   })
-
 
   /* hide all elements in elementsArr */
 
