@@ -1,23 +1,4 @@
 async function init () {
-  // cache some selectors we'll be using quite a bit
-  // const $body = $("body");
-  // const $allStoriesList = $("#all-articles-list");
-  // const $submitForm = $("#submit-form");
-  // const $filteredArticles = $("#filtered-articles");
-  // const $loginForm = $("#login-form");
-  // const $createAccountForm = $("#create-account-form");
-  // const $ownStories = $("#my-articles");
-  // const $navLogin = $("#nav-login");
-  // const $navLogOut = $("#nav-logout");
-
-  // const $mainNavLinks = $(".main-nav-links");
-  // const $navUserProfile = $("#nav-user-profile");
-  // const $navWelcome = $('#nav-welcome');
-  // const $navSubmit = $('#nav-submit');
-  // const $navFavorites = $("#nav-favorites");
-  // const $favoritedStories = $("#favorited-articles");
-  // const $userProfiles = $('#user-profile');
-
   const navAll = document.querySelectorAll('#nav-all');
   const body = document.querySelector('body');
   const allStoriesList = document.querySelector('#all-articles-list');
@@ -35,13 +16,14 @@ async function init () {
   const navWelcome = document.querySelector('#nav-welcome');
   const navSubmit = document.querySelector('#nav-submit');
   const navFavorites = document.querySelector("#nav-favorites");
+  const navMyStories = document.querySelector('#nav-my-stories');
   const favoritedStories = document.querySelector("#favorited-articles");
   const userProfiles = document.querySelector('#user-profile');
 
   const profileName = document.querySelector('#profile-name');
   const profileUsername = document.querySelector('#profile-username');
   const profileAccountDate = document.querySelector('#profile-account-date');
-  const trashCan = document.querySelector('.trash-can');
+
 
 
   await checkIfLoggedIn();
@@ -49,8 +31,7 @@ async function init () {
 
 
   /**
-   *  Event listener for logging in.
-   *  If successfully we will setup the user instance
+   *  Event listener for logging in, If successful, we will setup the user instance
    */
   loginForm.addEventListener('submit', async function (evt) {
     evt.preventDefault();
@@ -66,8 +47,7 @@ async function init () {
   });
 
   /**
-   * Event listener for signing up.
-   *  If successfully we will setup a new user instance
+   * Event listener for signing up, If successful we will setup a new user instance
    */
   createAccountForm.addEventListener('submit', async function (evt) {
     evt.preventDefault();
@@ -91,15 +71,93 @@ async function init () {
   });
 
   /**
-   * Event Handler for Clicking Login
-   * It will show both login and signup forms
-   * and hide stories.
+   * Event Handler for Clicking Login: it will show login/signup forms and hide stories.
    */
   navLogin.addEventListener('click', function () {
     loginForm.classList.remove('hidden');
     createAccountForm.classList.remove('hidden');
     toggleHideShow(allStoriesList);
   });
+
+    /** 
+     * Display submit form when clicking on nav link
+   */
+
+  navSubmit.addEventListener('click', function (e) {
+    if (currentUser) {
+      hideElements();
+      slideToggle("#submit-form");
+      showEl(allStoriesList);
+    }
+  })
+
+  navFavorites.addEventListener('click', function () {
+    hideElements();
+    if (currentUser) {
+      addFavorites();
+      showEl(favoritedStories);
+    }
+  })
+
+  navMyStories.addEventListener('click', async function () {
+    hideElements();
+    if (currentUser) {
+      await generateStories();
+      addMyStories()
+      showEl(ownStories)
+      ownStories.classList.remove('hidden');
+      removeStories();
+    }
+  })
+
+
+  navUserProfile.addEventListener('click', function () {
+    // console.log(currentUser)
+    hideElements();
+    showEl(userProfiles);
+    profileName.textContent = `Name: ${currentUser.name}`;
+    // show your username
+    profileUsername.textContent = `Username: ${currentUser.username}`;
+    // format and display the account creation date
+    profileAccountDate.textContent =
+      `Account Created: ${currentUser.createdAt.slice(0, 10)}`;
+
+  })
+
+
+  submitForm.addEventListener('submit', async function (event) {
+    if (!currentUser) {
+      showNavForLoggedInUser()
+      return
+    }
+    let author = event.target.querySelector('#author').value;
+    let title = event.target.querySelector('#title').value;
+    let url = event.target.querySelector('#url').value;
+
+    //make an axios post
+    let instance = new StoryList(storyList)
+    await instance.addStory(currentUser, {
+      title,
+      author,
+      url
+    })
+    await generateStories();
+    slideToggle('#submit-form');
+    submitForm.reset();
+  })
+
+
+  /**
+   * Event handler for Navigation to Homepage
+   */
+
+  navAll.forEach(item => item.addEventListener('click', async function () {
+    hideElements();
+    await generateStories();
+    showEl(allStoriesList)
+    addFaveClickEvent();
+  }))
+
 
 
   function addFavorites() {
@@ -123,7 +181,6 @@ async function init () {
 
   async function addMyStories() {
     empty(ownStories);
-    await generateStories();
     const noStoryYet = document.createElement('h5');
     noStoryYet.innerText = `${currentUser.name} has not posted any articles yet.`
     if (currentUser.ownStories.length === 0) {
@@ -134,50 +191,13 @@ async function init () {
         ownStories.appendChild(ownStoryHTML);
       }
     }
-    // showEl(ownStories);
   }
 
-  /**
-   * Display submit form when clicking on nav link
-   */
 
-  navSubmit.addEventListener('click', function (e) {
-    if (currentUser) {
-      hideElements();
-      slideToggle("#submit-form");
-      // showEl(submitForm);
-      showEl(allStoriesList);
-    }
-  })
-
-
-
-  navFavorites.addEventListener('click', function () {
-    hideElements();
-    if (currentUser) {
-      addFavorites();
-      showEl(favoritedStories);
-    }
-  })
-
-
-
-  document.querySelector('#nav-my-stories').addEventListener('click', async function () {
-    hideElements();
-    // $userProfiles.hide();
-    if (currentUser) {
-      await generateStories();
-      addMyStories()
-      showEl(ownStories)
-      ownStories.classList.remove('hidden');
-      // $ownStories.show()
-      addStoriesToList();
-    }
-
-
-  })
-
-  function addStoriesToList() {
+/**
+ * Remove a single story
+ */
+  function removeStories() {
     let myStories = document.querySelectorAll('#my-articles li');
     console.log('mystories', myStories, myStories.length);
     for (let story of myStories) {
@@ -186,121 +206,16 @@ async function init () {
         // get the Story's ID
         const closestLi = (evt.target).closest("li");
         const storyId = closestLi.getAttribute("id");
-  
         // remove the story from the API
         await storyList.removeStory(currentUser, storyId);
-  
         // re-generate the story list
         await generateStories();
-  
-        // hide everyhing
+        // hide everyhing, and then show stories
         hideElements();
-        // $ownStories.show()
-  
-        // ...except the story list
         showEl(allStoriesList);
-        // $allStoriesList.show();
       });
-
     }
-
   }
-
-
-
-
-  /**
-   * Event Handler for Deleting a Single Story
-   */
-
-  // const ownStoriesLi = document.querySelectorAll('#my-articles li');
-  // for (let i = 0; i < ownStoriesLi.length; i++) {
-  //   let trashCan = ownStoriesLi[i].querySelector('.trash-can');
-  //   trashCan.addEventListener('click', async function (evt) {
-  //     // get the Story's ID
-  //     const closestLi = (evt.target).closest("li");
-  //     const storyId = closestLi.getAttribute("id");
-
-  //     // remove the story from the API
-  //     await storyList.removeStory(currentUser, storyId);
-
-  //     // re-generate the story list
-  //     await generateStories();
-
-  //     // hide everyhing
-  //     hideElements();
-  //     // $ownStories.show()
-
-  //     // ...except the story list
-  //     showEl(allStoriesList);
-  //     // $allStoriesList.show();
-  //   })
-  // }
-
-
-
-
-  navUserProfile.addEventListener('click', function () {
-    // console.log(currentUser)
-    hideElements();
-    // $userProfiles.show();
-    showEl(userProfiles);
-    profileName.textContent = `Name: ${currentUser.name}`;
-    // show your username
-    profileUsername.textContent = `Username: ${currentUser.username}`;
-    // format and display the account creation date
-    profileAccountDate.textContent =
-      `Account Created: ${currentUser.createdAt.slice(0, 10)}`;
-
-  })
-
-  // async function handleSubmit($submitForm) {
-  submitForm.addEventListener('submit', async function (event) {
-    if (!currentUser) {
-      showNavForLoggedInUser()
-      return
-    }
-
-    let author = event.target.querySelector('#author').value;
-    let title = event.target.querySelector('#title').value;
-    let url = event.target.querySelector('#url').value;
-
-    //make an axios post
-    // let instance = new StoryList(storyList);
-    let instance = new StoryList(storyList)
-    // await instance.addStory(currentUser, {title, author, url})
-
-    await instance.addStory(currentUser, {
-      title,
-      author,
-      url
-    })
-    await generateStories();
-    // $submitForm.slideUp("slow");
-    slideToggle('#submit-form');
-    submitForm.reset();
-
-
-  })
-  // }
-
-  // handleSubmit($submitForm)
-
-
-  /**
-   * Event handler for Navigation to Homepage
-   */
-
-
-  navAll.forEach(item => item.addEventListener('click', async function () {
-    //handle click
-    hideElements();
-    await generateStories();
-    showEl(allStoriesList)
-    addEventsToStar();
-
-    // $allStoriesList.show();
-  }))
 
 
   /**
@@ -425,13 +340,9 @@ async function init () {
     storyMarkup.append(smallAuthor, smallHostname, smallUsername);
     return storyMarkup;
   }
-
-
-
-  // const articlesLi = document.querySelectorAll('#all-articles-list li');
-  // console.log('length', articlesLi.length)
   
-  function addEventsToStar() {
+
+  function addFaveClickEvent() {
     let stars = document.querySelectorAll('.star');
     for (let star of stars) {
       
@@ -462,7 +373,7 @@ async function init () {
     }
   }
 
-  addEventsToStar()
+  addFaveClickEvent()
 
 
 
