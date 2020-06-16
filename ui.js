@@ -1,4 +1,4 @@
-$(async function () {
+async function init () {
   // cache some selectors we'll be using quite a bit
   // const $body = $("body");
   // const $allStoriesList = $("#all-articles-list");
@@ -121,8 +121,9 @@ $(async function () {
   }
 
 
-  function addMyStories() {
+  async function addMyStories() {
     empty(ownStories);
+    await generateStories();
     const noStoryYet = document.createElement('h5');
     noStoryYet.innerText = `${currentUser.name} has not posted any articles yet.`
     if (currentUser.ownStories.length === 0) {
@@ -133,7 +134,7 @@ $(async function () {
         ownStories.appendChild(ownStoryHTML);
       }
     }
-    showEl(ownStories);
+    // showEl(ownStories);
   }
 
   /**
@@ -170,63 +171,71 @@ $(async function () {
       showEl(ownStories)
       ownStories.classList.remove('hidden');
       // $ownStories.show()
+      addStoriesToList();
     }
 
-    const myStoriesLi = document.querySelectorAll('#my-articles li');
-    console.log(myStoriesLi);
-    console.log('length', myStoriesLi.length)
-    for (let each = 0; each < myStoriesLi.length; each++) {
-      // console.log('delete story');
-      let trashEach = myStoriesLi[each].querySelector('.trash-can');
+
+  })
+
+  function addStoriesToList() {
+    let myStories = document.querySelectorAll('#my-articles li');
+    console.log('mystories', myStories, myStories.length);
+    for (let story of myStories) {
+      let trashEach = story.querySelector('.trash-can');
       trashEach.addEventListener('click', async function (evt) {
         // get the Story's ID
         const closestLi = (evt.target).closest("li");
         const storyId = closestLi.getAttribute("id");
-
+  
         // remove the story from the API
         await storyList.removeStory(currentUser, storyId);
-
+  
         // re-generate the story list
         await generateStories();
-
+  
         // hide everyhing
         hideElements();
         // $ownStories.show()
-
+  
         // ...except the story list
         showEl(allStoriesList);
         // $allStoriesList.show();
       });
+
     }
-  })
+
+  }
+
+
+
 
   /**
    * Event Handler for Deleting a Single Story
    */
 
-  const ownStoriesLi = document.querySelectorAll('#my-articles li');
-  for (let i = 0; i < ownStoriesLi.length; i++) {
-    let trashCan = ownStoriesLi[i].querySelector('.trash-can');
-    trashCan.addEventListener('click', async function (evt) {
-      // get the Story's ID
-      const closestLi = (evt.target).closest("li");
-      const storyId = closestLi.getAttribute("id");
+  // const ownStoriesLi = document.querySelectorAll('#my-articles li');
+  // for (let i = 0; i < ownStoriesLi.length; i++) {
+  //   let trashCan = ownStoriesLi[i].querySelector('.trash-can');
+  //   trashCan.addEventListener('click', async function (evt) {
+  //     // get the Story's ID
+  //     const closestLi = (evt.target).closest("li");
+  //     const storyId = closestLi.getAttribute("id");
 
-      // remove the story from the API
-      await storyList.removeStory(currentUser, storyId);
+  //     // remove the story from the API
+  //     await storyList.removeStory(currentUser, storyId);
 
-      // re-generate the story list
-      await generateStories();
+  //     // re-generate the story list
+  //     await generateStories();
 
-      // hide everyhing
-      hideElements();
-      // $ownStories.show()
+  //     // hide everyhing
+  //     hideElements();
+  //     // $ownStories.show()
 
-      // ...except the story list
-      showEl(allStoriesList);
-      // $allStoriesList.show();
-    })
-  }
+  //     // ...except the story list
+  //     showEl(allStoriesList);
+  //     // $allStoriesList.show();
+  //   })
+  // }
 
 
 
@@ -288,6 +297,8 @@ $(async function () {
     hideElements();
     await generateStories();
     showEl(allStoriesList)
+    addEventsToStar();
+
     // $allStoriesList.show();
   }))
 
@@ -359,10 +370,11 @@ $(async function () {
     let favStoryIds = new Set();
     if (currentUser) {
       favStoryIds = new Set(currentUser.favorites.map(obj => obj.storyId));
-
     }
     // console.log(favStoryIds);
     // console.log('fav', favStoryIds.has(story.storyId))
+    //set.prototype returns a boolean indicating whether element with specified
+    //value exists in a Set object or not.
     return favStoryIds.has(story.storyId);
   }
 
@@ -416,35 +428,43 @@ $(async function () {
 
 
 
-  const articlesLi = document.querySelectorAll('#all-articles-list li');
+  // const articlesLi = document.querySelectorAll('#all-articles-list li');
   // console.log('length', articlesLi.length)
-  for (let i = 0; i < articlesLi.length; i++) {
-    let star = articlesLi[i].querySelector('.star');
-    // console.log(star);
-    star.addEventListener('click', async function (evt) {
-      console.log('hee')
-      if (currentUser) {
-        const tgt = evt.target;
-        console.log(tgt);
-        //get closest ancestor
-        const closestLi = tgt.closest('li');
-        // console.log(closestLi);
-        const storyId = closestLi.getAttribute("id");
-        // console.log(storyId);
-
-        if (tgt.classList.contains("fas")) {
-          await currentUser.removeFavorite(storyId);
-          tgt.closest('i').classList.toggle('fas');
-          tgt.closest('i').classList.toggle('far');
-
-        } else {
-          await currentUser.addFavorite(storyId);
-          tgt.closest('i').classList.toggle('far');
-          tgt.closest('i').classList.toggle('fas');
+  
+  function addEventsToStar() {
+    let stars = document.querySelectorAll('.star');
+    for (let star of stars) {
+      
+      // console.log(star);
+      star.addEventListener('click', async function handleStarClick(evt) {
+        // console.log('hee')
+        if (currentUser) {
+          const tgt = evt.target;
+          console.log(tgt);
+          //get closest ancestor
+          const closestLi = tgt.closest('li');
+          // console.log(closestLi);
+          const storyId = closestLi.getAttribute("id");
+          // console.log(storyId);
+  
+          if (tgt.classList.contains("fas")) {
+            await currentUser.removeFavorite(storyId);
+            tgt.closest('i').classList.toggle('fas');
+            tgt.closest('i').classList.toggle('far');
+  
+          } else {
+            await currentUser.addFavorite(storyId);
+            tgt.closest('i').classList.toggle('far');
+            tgt.closest('i').classList.toggle('fas');
+          }
         }
-      }
-    })
+      })
+    }
   }
+
+  addEventsToStar()
+
+
 
   /* hide all elements in elementsArr */
 
@@ -472,4 +492,7 @@ $(async function () {
     navUserProfile.textContent = currentUser.username;
   }
 
-});
+}
+
+
+document.addEventListener('DOMContentLoaded', init)

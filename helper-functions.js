@@ -66,7 +66,7 @@ let intval = null;
 
 function slideToggle(el) {
   var elem = document.querySelector(el);
-  console.log('elem', elem);
+  // console.log('elem', elem);
   initHeight = elem.offsetHeight;
   // if(!heightChecked) {
     // console.log('one', toggleContainer)
