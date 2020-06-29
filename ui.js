@@ -3,6 +3,7 @@ async function init () {
   const body = document.querySelector('body');
   const allStoriesList = document.querySelector('#all-articles-list');
   const submitForm = document.querySelector('#submit-form');
+  const editForm = document.querySelector('#edit-article-form');
   const filteredArticles = document.querySelector('#filtered-articles');
   const loginForm = document.querySelector('#login-form');
   const createAccountForm = document.querySelector('#create-account-form');
@@ -10,7 +11,7 @@ async function init () {
   const navLogin = document.querySelector("#nav-login");
   const navLogOut = document.querySelector("#nav-logout");
 
-  const articlesContainer = document.querySelector('.articles-container')
+  // const articlesContainer = document.querySelector('.articles-container')
   const mainNavLinks = document.querySelector(".main-nav-links");
   const navUserProfile = document.querySelector("#nav-user-profile");
   const navWelcome = document.querySelector('#nav-welcome');
@@ -23,6 +24,7 @@ async function init () {
   const profileName = document.querySelector('#profile-name');
   const profileUsername = document.querySelector('#profile-username');
   const profileAccountDate = document.querySelector('#profile-account-date');
+  // const updateStoryButton = document.querySelector('button#update-story');
 
 
 
@@ -62,27 +64,20 @@ async function init () {
     loginAndSubmitForm();
   });
 
-  /**
-   * Log Out Functionality: empty local storage, refresh page, clear memory
-   */
+  //Log Out Functionality: empty local storage, refresh page, clear memory
   navLogOut.addEventListener('click', function () {
     localStorage.clear();
     location.reload();
   });
 
-  /**
-   * Event Handler for Clicking Login: it will show login/signup forms and hide stories.
-   */
+  //it will show login/signup forms and hide stories.
   navLogin.addEventListener('click', function () {
     loginForm.classList.remove('hidden');
     createAccountForm.classList.remove('hidden');
     toggleHideShow(allStoriesList);
   });
 
-    /** 
-     * Display submit form when clicking on nav link
-   */
-
+  //Display submit form when clicking on nav link
   navSubmit.addEventListener('click', function (e) {
     if (currentUser) {
       hideElements();
@@ -96,19 +91,52 @@ async function init () {
     if (currentUser) {
       addFavorites();
       showEl(favoritedStories);
+      addFaveClickEvent()
     }
   })
 
-  navMyStories.addEventListener('click', async function () {
+
+
+  const containers = document.querySelectorAll('.articles-container');
+  for(let i = 0; i < containers.length; i++) {
+    let star = containers[i].querySelector('.star');
+    star.addEventListener('click', async function(evt) { /* event handling here */ })
+  }
+
+
+body.addEventListener('click', async function(evt) {
+  let clickedEvt = evt.target;
+  if (clickedEvt === navMyStories) {
+    console.log('yes')
     hideElements();
     if (currentUser) {
+      // await generateStories();
       await generateStories();
-      addMyStories()
+     await addMyStories()
       showEl(ownStories)
       ownStories.classList.remove('hidden');
       removeStories();
+      updateStory();
+      addFaveClickEvent()
     }
-  })
+  } 
+
+})
+
+
+  // navMyStories.addEventListener('click', async function () {
+  //   hideElements();
+  //   if (currentUser) {
+  //     // await generateStories();
+  //     await generateStories();
+  //    await addMyStories()
+  //     showEl(ownStories)
+  //     ownStories.classList.remove('hidden');
+  //     removeStories();
+  //     updateStory();
+  //     addFaveClickEvent()
+  //   }
+  // })
 
 
   navUserProfile.addEventListener('click', function () {
@@ -136,21 +164,14 @@ async function init () {
 
     //make an axios post
     let instance = new StoryList(storyList)
-    await instance.addStory(currentUser, {
-      title,
-      author,
-      url
-    })
+    await instance.addStory(currentUser, { title,author,url })
     await generateStories();
     slideToggle('#submit-form');
     submitForm.reset();
   })
 
 
-  /**
-   * Event handler for Navigation to Homepage
-   */
-
+  //Event handler for Navigation to Homepage
   navAll.forEach(item => item.addEventListener('click', async function () {
     hideElements();
     await generateStories();
@@ -199,7 +220,7 @@ async function init () {
  */
   function removeStories() {
     let myStories = document.querySelectorAll('#my-articles li');
-    console.log('mystories', myStories, myStories.length);
+    // console.log('mystories', myStories, myStories.length);
     for (let story of myStories) {
       let trashEach = story.querySelector('.trash-can');
       trashEach.addEventListener('click', async function (evt) {
@@ -216,6 +237,23 @@ async function init () {
       });
     }
   }
+
+
+  /**
+   * Edit a story
+   */
+
+   function updateStory() {
+    return
+    let myStories = document.querySelectorAll('#my-articles li');
+    // console.log('mystories', myStories, myStories.length);
+    for (let story of myStories) {
+      let pencilEach = story.querySelector('.pencil');
+      console.log({story})
+      
+    }
+
+   }
 
 
   /**
@@ -306,25 +344,96 @@ async function init () {
     let itrash = document.createElement('i');
     itrash.className = 'fas fa-trash-alt';
     trashEl.appendChild(itrash);
-    let noTrash = document.createElement('span');
+    let spanEl = document.createElement('span');
 
-    let trashCanIcon = isOwnStory ? trashEl : noTrash;
+    let editEl = document.createElement('span');
+    editEl.className = "pencil";
+    let ieditTag = document.createElement('i');
+    ieditTag.className ='fa fa-pencil-square-o';
+    editEl.appendChild(ieditTag);
+// babak ass
+
+
+
+
+
+
+    let trashCanIcon = isOwnStory ? trashEl : spanEl;
+    let editIcon = isOwnStory ? editEl: spanEl;
 
     // render story markup
     let storyMarkup = document.createElement('li');
     let star = document.createElement('span');
     star.className = 'star';
     storyMarkup.id = story.storyId;
-    let iTag = document.createElement('i');
-    iTag.className = `fa-star ${starType}`;
-    star.appendChild(iTag);
+    let iTagStar = document.createElement('i');
+    iTagStar.className = `fa-star ${starType}`;
+    star.appendChild(iTagStar);
     let aTag = document.createElement('a');
     aTag.className = 'article-link';
     aTag.href = story.url;
     aTag.setAttribute('target', 'a_blank');
     let strongEl = document.createElement('strong');
     strongEl.innerText = story.title;
+
+
+
+
+
+
+editEl.addEventListener('click', async function (evt) {
+  const closestLi = (evt.target).closest("li");
+  const storyId = closestLi.getAttribute("id");
+  const innerTextTitle = closestLi.getElementsByTagName('small')[0].textContent;
+  // const innerTextUrl = closestLi.getElementsByTagName('small')[1].textContent;
+  // const innerTextAuthor = closestLi.getElementsByTagName('small')[2].textContent;
+  editForm.classList.remove('hidden');
+  document.querySelector('input#edit-title').value = story.title;
+  // document.querySelector('input#edit-url').value = innerTextUrl;
+  // document.querySelector('input#edit-author').value = innerTextAuthor.substring(10);
+  const buttonUpdate = document.querySelector('button#update-story');
+  console.log('button', buttonUpdate)
+
+  buttonUpdate.addEventListener('click', async function(evt) {
+    // let author = event.target.querySelector('input#edit-author').value;
+    let titleEl = document.querySelector('input#edit-title');
+    console.log({titleEl})
+    let title = titleEl.value
+    // let url = event.target.querySelector('input#edit-url').value;
+  
+    let response = await storyList.updateStory(currentUser, { title }, storyId);
+    // re-generate the story list
+    if( response.status !== 200 ) {
+      // handle error
+      return
+    } 
+    // mutations
+    strongEl.innerText = title;
+    story.title = title;
+    hideElements();
+    await generateStories();
+    showEl(ownStories)
+    editForm.reset();
+
+  })
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     storyMarkup.appendChild(trashCanIcon);
+    storyMarkup.appendChild(editIcon);
     storyMarkup.appendChild(star)
     storyMarkup.appendChild(aTag);
     aTag.appendChild(strongEl);

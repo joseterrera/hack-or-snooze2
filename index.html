@@ -48,6 +48,25 @@
       <button type="submit">submit</button>
       <hr>
     </form>
+
+    <!-- <form action="" class="hidden" id="edit-form">
+      <div>
+        <label for="edit-title">Update Title</label>
+        <input id="edit-title" required type="text" placeholder="author title">
+      </div>
+      <div>
+        <label for="edit-url">Update url</label>
+        <input id="edit-url" required type="url" placeholder="article url">
+      </div>
+      <div>
+        <label for="edit-author">Update author</label>
+        <input id="edit-author" required type="text" placeholder="article author">
+      </div>
+
+      <button id="update-story" type="submit">Edit Story</button>
+      <hr>
+    </form> -->
+    
     <article>
       <ol id="all-articles-list" class="articles-list">
         <h3>Loading...</h3>
@@ -68,11 +87,11 @@
   </section>
   <section class="edit-article-container container">
     <form action="#" id="edit-article-form" class="hidden" method="post">
-      <h4>Article Information</h4>
+      <h4>Article Information / Update Title</h4>
       <div class="edit-input">
         <label for="edit-title">Title</label>
         <input id="edit-title" type="text">
-        <button type="submit">change</button>
+        <button type="button" id="update-story">Update</button>
       </div>
     </form>
   </section>

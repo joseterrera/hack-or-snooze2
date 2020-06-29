@@ -64,11 +64,13 @@ class StoryList {
 
 
 
-  static async updateStory(user, story, storyId) {
-    const response = await axios.patch(`${BASE_URL}/${storyId}`, {
-			token: user,
+  async updateStory(User, story, storyId) {
+    // console.log({User,story},User.loginToken)
+    let response = await axios.patch(`${BASE_URL}/stories/${storyId}`, {
+			token: User.loginToken,
 			story: story
-		});
+    });
+    return response
   }
 
   
@@ -158,7 +160,7 @@ class User {
 
     // attach the token to the newUser instance for convenience
     existingUser.loginToken = response.data.token;
-
+    console.log({existingUser})
     return existingUser;
   }
 
