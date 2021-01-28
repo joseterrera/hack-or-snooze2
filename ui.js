@@ -156,14 +156,18 @@ body.addEventListener('click', async function(evt) {
       showNavForLoggedInUser()
       return
     }
+    console.log('here')
     let author = event.target.querySelector('#author').value;
     let title = event.target.querySelector('#title').value;
     let url = event.target.querySelector('#url').value;
 
+    
     //make an axios post
     let instance = new StoryList(storyList)
     await instance.addStory(currentUser, { title,author,url })
+    console.log('storylist', instance)
     await generateStories();
+
     slideToggle('#submit-form');
     submitForm.reset();
   })
@@ -209,6 +213,7 @@ body.addEventListener('click', async function(evt) {
         let ownStoryHTML = generateStoryHTML(story, true);
         ownStories.appendChild(ownStoryHTML);
       }
+      console.log('own', currentUser.ownStories.length)
     }
   }
 
@@ -242,7 +247,7 @@ body.addEventListener('click', async function(evt) {
    */
 
    function updateStory() {
-    return
+    // return
     let myStories = document.querySelectorAll('#my-articles li');
     // console.log('mystories', myStories, myStories.length);
     for (let story of myStories) {
@@ -311,6 +316,7 @@ body.addEventListener('click', async function(evt) {
       // console.log(result);
       allStoriesList.appendChild(result);
     }
+    console.log('generate', currentUser.ownStories.length)
   }
 
   /**
