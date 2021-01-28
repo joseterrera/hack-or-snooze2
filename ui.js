@@ -122,8 +122,6 @@ body.addEventListener('click', async function(evt) {
   } 
 
 })
-
-
   // navMyStories.addEventListener('click', async function () {
   //   hideElements();
   //   if (currentUser) {
@@ -483,8 +481,6 @@ editEl.addEventListener('click', async function (evt) {
   }
 
   addFaveClickEvent()
-
-
 
   /* hide all elements in elementsArr */
 
