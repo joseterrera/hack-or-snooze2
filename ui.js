@@ -29,6 +29,8 @@ async function init () {
 
 
   await checkIfLoggedIn();
+  // console.log('curr', currentUser)
+
 
   /**
    *  Event listener for logging in, If successful, we will setup the user instance
@@ -105,15 +107,12 @@ async function init () {
 body.addEventListener('click', async function(evt) {
   let clickedEvt = evt.target;
   if (clickedEvt === navMyStories) {
-    console.log('yes')
+    // console.log('yes')
     hideElements();
-    await generateStories();
-    console.log('currentUser', currentUser.ownStories)
     if (currentUser) {
-
       // await generateStories();
-
-      // await addMyStories()
+      await addMyStories()
+      await generateStories();
       showEl(ownStories)
       ownStories.classList.remove('hidden');
       removeStories();
@@ -168,7 +167,7 @@ body.addEventListener('click', async function(evt) {
     let instance = new StoryList()
     await instance.addStory(currentUser, { title,author,url })
     await generateStories();
-    // console.log('story added?', instance)
+    console.log('story added?', instance)
     slideToggle('#submit-form');
     submitForm.reset();
   })
@@ -212,7 +211,6 @@ body.addEventListener('click', async function(evt) {
     } else {
       for (let story of currentUser.ownStories) {
         // console.log('currentuser', currentUser)
-
         let ownStoryHTML = generateStoryHTML(story, true);
         ownStories.appendChild(ownStoryHTML);
       }
@@ -304,13 +302,10 @@ body.addEventListener('click', async function(evt) {
    */
 
   async function generateStories() {
-    // let instance = new StoryList()
-    // await instance.addStory(currentUser, { title,author,url })
     // get an instance of StoryList
     const storyListInstance = await StoryList.getStories();
     // update our global variable
     storyList = storyListInstance;
-    console.log('storyList in generateStories', storyList.stories)
     // empty out that part of the page
     empty(allStoriesList);
 
@@ -449,6 +444,7 @@ editEl.addEventListener('click', async function (evt) {
 
       // console.log(star);
       star.addEventListener('click', async function handleStarClick(evt) {
+        // console.log('hee')
         if (currentUser) {
           const tgt = evt.target;
           console.log(tgt);
