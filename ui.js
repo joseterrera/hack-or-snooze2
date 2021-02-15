@@ -29,8 +29,6 @@ async function init () {
 
 
   await checkIfLoggedIn();
-  // console.log('curr', currentUser)
-
 
   /**
    *  Event listener for logging in, If successful, we will setup the user instance
@@ -109,17 +107,20 @@ body.addEventListener('click', async function(evt) {
   if (clickedEvt === navMyStories) {
     console.log('yes')
     hideElements();
+    await generateStories();
+    console.log('currentUser', currentUser.ownStories)
     if (currentUser) {
+
       // await generateStories();
-      await generateStories();
-     await addMyStories()
+
+      // await addMyStories()
       showEl(ownStories)
       ownStories.classList.remove('hidden');
       removeStories();
       updateStory();
       addFaveClickEvent()
     }
-  } 
+  }
 
 })
 
@@ -154,6 +155,7 @@ body.addEventListener('click', async function(evt) {
 
 
   submitForm.addEventListener('submit', async function (event) {
+    event.preventDefault();
     if (!currentUser) {
       showNavForLoggedInUser()
       return
@@ -163,9 +165,10 @@ body.addEventListener('click', async function(evt) {
     let url = event.target.querySelector('#url').value;
 
     //make an axios post
-    let instance = new StoryList(storyList)
+    let instance = new StoryList()
     await instance.addStory(currentUser, { title,author,url })
     await generateStories();
+    // console.log('story added?', instance)
     slideToggle('#submit-form');
     submitForm.reset();
   })
@@ -208,6 +211,8 @@ body.addEventListener('click', async function(evt) {
       ownStories.appendChild(noStoryYet);
     } else {
       for (let story of currentUser.ownStories) {
+        // console.log('currentuser', currentUser)
+
         let ownStoryHTML = generateStoryHTML(story, true);
         ownStories.appendChild(ownStoryHTML);
       }
@@ -250,7 +255,7 @@ body.addEventListener('click', async function(evt) {
     for (let story of myStories) {
       let pencilEach = story.querySelector('.pencil');
       console.log({story})
-      
+
     }
 
    }
@@ -260,7 +265,6 @@ body.addEventListener('click', async function(evt) {
    * On page load, checks local storage to see if the user is already logged in.
    * Renders page information accordingly.
    */
-
   async function checkIfLoggedIn() {
     // let's see if we're logged in
     const token = localStorage.getItem("token");
@@ -300,10 +304,13 @@ body.addEventListener('click', async function(evt) {
    */
 
   async function generateStories() {
+    // let instance = new StoryList()
+    // await instance.addStory(currentUser, { title,author,url })
     // get an instance of StoryList
     const storyListInstance = await StoryList.getStories();
     // update our global variable
     storyList = storyListInstance;
+    console.log('storyList in generateStories', storyList.stories)
     // empty out that part of the page
     empty(allStoriesList);
 
@@ -316,7 +323,7 @@ body.addEventListener('click', async function(evt) {
   }
 
   /**
-   * Create a new set, 
+   * Create a new set,
    * return a boolean if is or isn't a fav story
    */
   function isFavorite(story) {
@@ -351,7 +358,6 @@ body.addEventListener('click', async function(evt) {
     let ieditTag = document.createElement('i');
     ieditTag.className ='fa fa-pencil-square-o';
     editEl.appendChild(ieditTag);
-// babak ass
 
 
 
@@ -400,13 +406,13 @@ editEl.addEventListener('click', async function (evt) {
     console.log({titleEl})
     let title = titleEl.value
     // let url = event.target.querySelector('input#edit-url').value;
-  
+
     let response = await storyList.updateStory(currentUser, { title }, storyId);
     // re-generate the story list
     if( response.status !== 200 ) {
       // handle error
       return
-    } 
+    }
     // mutations
     strongEl.innerText = title;
     story.title = title;
@@ -417,20 +423,6 @@ editEl.addEventListener('click', async function (evt) {
 
   })
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     storyMarkup.appendChild(trashCanIcon);
     storyMarkup.appendChild(editIcon);
@@ -449,15 +441,14 @@ editEl.addEventListener('click', async function (evt) {
     storyMarkup.append(smallAuthor, smallHostname, smallUsername);
     return storyMarkup;
   }
-  
+
 
   function addFaveClickEvent() {
     let stars = document.querySelectorAll('.star');
     for (let star of stars) {
-      
+
       // console.log(star);
       star.addEventListener('click', async function handleStarClick(evt) {
-        // console.log('hee')
         if (currentUser) {
           const tgt = evt.target;
           console.log(tgt);
@@ -466,12 +457,12 @@ editEl.addEventListener('click', async function (evt) {
           // console.log(closestLi);
           const storyId = closestLi.getAttribute("id");
           // console.log(storyId);
-  
+
           if (tgt.classList.contains("fas")) {
             await currentUser.removeFavorite(storyId);
             tgt.closest('i').classList.toggle('fas');
             tgt.closest('i').classList.toggle('far');
-  
+
           } else {
             await currentUser.addFavorite(storyId);
             tgt.closest('i').classList.toggle('far');

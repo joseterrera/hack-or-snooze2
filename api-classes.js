@@ -45,7 +45,7 @@ class StoryList {
 
 
 /**
- * 
+ *
  * Will return the newly created story which will be used in ui.js
  * where it will be appended to the DOM
  */
@@ -59,6 +59,7 @@ class StoryList {
         url
       }
     }
+    console.log('add story', apiData)
     await axios.post(`${BASE_URL}/stories`, apiData )
   }
 
@@ -73,7 +74,7 @@ class StoryList {
     return response
   }
 
-  
+
   async removeStory(user, storyId) {
     await axios({
       url: `${BASE_URL}/stories/${storyId}`,
@@ -207,7 +208,7 @@ class User {
     this.ownStories = response.data.user.stories.map(s => new Story(s));
     // console.log(response.data.user);
     return this;
-    
+
   }
 
   // async retrieveDetails() {
@@ -292,8 +293,8 @@ class Story {
   //   });
   //   const { author, title, url, updatedAt } = response.data.story;
   //   this.author = author;
-  //   this.title = title, 
-  //   this.url = url, 
+  //   this.title = title,
+  //   this.url = url,
   //   this.updatedAt = updatedAt
   // }
 }
