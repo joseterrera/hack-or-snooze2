@@ -60,7 +60,10 @@ class StoryList {
       }
     }
     console.log('add story', apiData)
-    await axios.post(`${BASE_URL}/stories`, apiData )
+    const res = await axios.post(`${BASE_URL}/stories`, apiData )
+    if(res.status === 201) {
+      user.ownStories.push(res.data.story)
+    }
   }
 
 

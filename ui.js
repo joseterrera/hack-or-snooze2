@@ -107,12 +107,14 @@ async function init () {
 body.addEventListener('click', async function(evt) {
   let clickedEvt = evt.target;
   if (clickedEvt === navMyStories) {
+    console.log('stories')
     // console.log('yes')
     hideElements();
+    console.log(currentUser)
     if (currentUser) {
       // await generateStories();
       await addMyStories()
-      await generateStories();
+      // await generateStories();
       showEl(ownStories)
       ownStories.classList.remove('hidden');
       removeStories();
