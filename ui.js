@@ -10,8 +10,6 @@ async function init () {
   const ownStories = document.querySelector("#my-articles");
   const navLogin = document.querySelector("#nav-login");
   const navLogOut = document.querySelector("#nav-logout");
-
-  // const articlesContainer = document.querySelector('.articles-container')
   const mainNavLinks = document.querySelector(".main-nav-links");
   const navUserProfile = document.querySelector("#nav-user-profile");
   const navWelcome = document.querySelector('#nav-welcome');
@@ -24,13 +22,10 @@ async function init () {
   const profileName = document.querySelector('#profile-name');
   const profileUsername = document.querySelector('#profile-username');
   const profileAccountDate = document.querySelector('#profile-account-date');
-  // const updateStoryButton = document.querySelector('button#update-story');
 
 
 
   await checkIfLoggedIn();
-  // console.log('curr', currentUser)
-
 
   /**
    *  Event listener for logging in, If successful, we will setup the user instance
@@ -96,25 +91,20 @@ async function init () {
   })
 
 
-
-  const containers = document.querySelectorAll('.articles-container');
-  for(let i = 0; i < containers.length; i++) {
-    let star = containers[i].querySelector('.star');
-    star.addEventListener('click', async function(evt) { /* event handling here */ })
-  }
+  // const containers = document.querySelectorAll('.articles-container');
+  // for(let i = 0; i < containers.length; i++) {
+  //   let star = containers[i].querySelector('.star');
+  //   star.addEventListener('click', async function(evt) { /* event handling here */ })
+  // }
 
 
 body.addEventListener('click', async function(evt) {
   let clickedEvt = evt.target;
   if (clickedEvt === navMyStories) {
-    console.log('stories')
-    // console.log('yes')
     hideElements();
-    console.log(currentUser)
+    // console.log(currentUser)
     if (currentUser) {
-      // await generateStories();
       await addMyStories()
-      // await generateStories();
       showEl(ownStories)
       ownStories.classList.remove('hidden');
       removeStories();
@@ -122,27 +112,10 @@ body.addEventListener('click', async function(evt) {
       addFaveClickEvent()
     }
   }
-
 })
 
 
-  // navMyStories.addEventListener('click', async function () {
-  //   hideElements();
-  //   if (currentUser) {
-  //     // await generateStories();
-  //     await generateStories();
-  //    await addMyStories()
-  //     showEl(ownStories)
-  //     ownStories.classList.remove('hidden');
-  //     removeStories();
-  //     updateStory();
-  //     addFaveClickEvent()
-  //   }
-  // })
-
-
   navUserProfile.addEventListener('click', function () {
-    // console.log(currentUser)
     hideElements();
     showEl(userProfiles);
     profileName.textContent = `Name: ${currentUser.name}`;
@@ -164,7 +137,6 @@ body.addEventListener('click', async function(evt) {
     let author = event.target.querySelector('#author').value;
     let title = event.target.querySelector('#title').value;
     let url = event.target.querySelector('#url').value;
-
     //make an axios post
     let instance = new StoryList()
     await instance.addStory(currentUser, { title,author,url })
@@ -212,7 +184,6 @@ body.addEventListener('click', async function(evt) {
       ownStories.appendChild(noStoryYet);
     } else {
       for (let story of currentUser.ownStories) {
-        // console.log('currentuser', currentUser)
         let ownStoryHTML = generateStoryHTML(story, true);
         ownStories.appendChild(ownStoryHTML);
       }
@@ -225,7 +196,6 @@ body.addEventListener('click', async function(evt) {
  */
   function removeStories() {
     let myStories = document.querySelectorAll('#my-articles li');
-    // console.log('mystories', myStories, myStories.length);
     for (let story of myStories) {
       let trashEach = story.querySelector('.trash-can');
       trashEach.addEventListener('click', async function (evt) {
@@ -248,17 +218,17 @@ body.addEventListener('click', async function(evt) {
    * Edit a story
    */
 
-   function updateStory() {
-    return
-    let myStories = document.querySelectorAll('#my-articles li');
-    // console.log('mystories', myStories, myStories.length);
-    for (let story of myStories) {
-      let pencilEach = story.querySelector('.pencil');
-      console.log({story})
+  //  function updateStory() {
+  //   return
+  //   let myStories = document.querySelectorAll('#my-articles li');
+  //   // console.log('mystories', myStories, myStories.length);
+  //   for (let story of myStories) {
+  //     let pencilEach = story.querySelector('.pencil');
+  //     console.log({story})
 
-    }
+  //   }
 
-   }
+  //  }
 
 
   /**
@@ -269,7 +239,6 @@ body.addEventListener('click', async function(evt) {
     // let's see if we're logged in
     const token = localStorage.getItem("token");
     const username = localStorage.getItem("username");
-
     // if there is a token in localStorage, call User.getLoggedInUser
     //  to get an instance of User with the right details
     //  this is designed to run once, on page load
@@ -285,7 +254,6 @@ body.addEventListener('click', async function(evt) {
    * A rendering function to run to reset the forms,
    * show the stories and the nav for logged in users`
    */
-
   function loginAndSubmitForm() {
     hideEl(loginForm);
     hideEl(createAccountForm);
@@ -296,13 +264,10 @@ body.addEventListener('click', async function(evt) {
     showNavForLoggedInUser();
   }
 
-
-
   /**
    * A rendering function to call the StoryList.getStories static method,
    *  which will generate a storyListInstance. Then render it.
    */
-
   async function generateStories() {
     // get an instance of StoryList
     const storyListInstance = await StoryList.getStories();
@@ -310,11 +275,9 @@ body.addEventListener('click', async function(evt) {
     storyList = storyListInstance;
     // empty out that part of the page
     empty(allStoriesList);
-
     // loop through all of our stories and generate HTML for them
     for (let story of storyList.stories) {
       const result = generateStoryHTML(story);
-      // console.log(result);
       allStoriesList.appendChild(result);
     }
   }
@@ -328,8 +291,6 @@ body.addEventListener('click', async function(evt) {
     if (currentUser) {
       favStoryIds = new Set(currentUser.favorites.map(obj => obj.storyId));
     }
-    // console.log(favStoryIds);
-    // console.log('fav', favStoryIds.has(story.storyId))
     //set.prototype returns a boolean indicating whether element with specified
     //value exists in a Set object or not.
     return favStoryIds.has(story.storyId);
@@ -338,10 +299,8 @@ body.addEventListener('click', async function(evt) {
   /**
    * A function to render HTML for an individual Story instance
    */
-
   function generateStoryHTML(story, isOwnStory) {
     let hostName = getHostName(story.url);
-    // let starType = isFavorite(story) ? 'fas' : 'far'
     let starType = isFavorite(story) ? "fas" : "far";
     let trashEl = document.createElement('span');
     trashEl.className = 'trash-can';
@@ -355,12 +314,6 @@ body.addEventListener('click', async function(evt) {
     let ieditTag = document.createElement('i');
     ieditTag.className ='fa fa-pencil-square-o';
     editEl.appendChild(ieditTag);
-
-
-
-
-
-
     let trashCanIcon = isOwnStory ? trashEl : spanEl;
     let editIcon = isOwnStory ? editEl: spanEl;
 
@@ -380,46 +333,34 @@ body.addEventListener('click', async function(evt) {
     strongEl.innerText = story.title;
 
 
+    editEl.addEventListener('click', async function (evt) {
+      const closestLi = (evt.target).closest("li");
+      const storyId = closestLi.getAttribute("id");
+      editForm.classList.remove('hidden');
+      document.querySelector('input#edit-title').value = story.title;
+      const buttonUpdate = document.querySelector('button#update-story');
+      console.log('button', buttonUpdate)
 
+      buttonUpdate.addEventListener('click', async function(evt) {
+        let titleEl = document.querySelector('input#edit-title');
+        console.log({titleEl})
+        let title = titleEl.value;
+        let response = await storyList.updateStory(currentUser, { title }, storyId);
+        // re-generate the story list
+        if( response.status !== 200 ) {
+          // handle error
+          return
+        }
+        // mutations
+        strongEl.innerText = title;
+        story.title = title;
+        hideElements();
+        await generateStories();
+        showEl(ownStories)
+        editForm.reset();
 
-
-
-editEl.addEventListener('click', async function (evt) {
-  const closestLi = (evt.target).closest("li");
-  const storyId = closestLi.getAttribute("id");
-  const innerTextTitle = closestLi.getElementsByTagName('small')[0].textContent;
-  // const innerTextUrl = closestLi.getElementsByTagName('small')[1].textContent;
-  // const innerTextAuthor = closestLi.getElementsByTagName('small')[2].textContent;
-  editForm.classList.remove('hidden');
-  document.querySelector('input#edit-title').value = story.title;
-  // document.querySelector('input#edit-url').value = innerTextUrl;
-  // document.querySelector('input#edit-author').value = innerTextAuthor.substring(10);
-  const buttonUpdate = document.querySelector('button#update-story');
-  console.log('button', buttonUpdate)
-
-  buttonUpdate.addEventListener('click', async function(evt) {
-    // let author = event.target.querySelector('input#edit-author').value;
-    let titleEl = document.querySelector('input#edit-title');
-    console.log({titleEl})
-    let title = titleEl.value
-    // let url = event.target.querySelector('input#edit-url').value;
-
-    let response = await storyList.updateStory(currentUser, { title }, storyId);
-    // re-generate the story list
-    if( response.status !== 200 ) {
-      // handle error
-      return
-    }
-    // mutations
-    strongEl.innerText = title;
-    story.title = title;
-    hideElements();
-    await generateStories();
-    showEl(ownStories)
-    editForm.reset();
-
-  })
-});
+      })
+    });
 
     storyMarkup.appendChild(trashCanIcon);
     storyMarkup.appendChild(editIcon);
@@ -443,19 +384,13 @@ editEl.addEventListener('click', async function (evt) {
   function addFaveClickEvent() {
     let stars = document.querySelectorAll('.star');
     for (let star of stars) {
-
-      // console.log(star);
       star.addEventListener('click', async function handleStarClick(evt) {
-        // console.log('hee')
         if (currentUser) {
           const tgt = evt.target;
           console.log(tgt);
           //get closest ancestor
           const closestLi = tgt.closest('li');
-          // console.log(closestLi);
           const storyId = closestLi.getAttribute("id");
-          // console.log(storyId);
-
           if (tgt.classList.contains("fas")) {
             await currentUser.removeFavorite(storyId);
             tgt.closest('i').classList.toggle('fas');
@@ -476,7 +411,6 @@ editEl.addEventListener('click', async function (evt) {
 
 
   /* hide all elements in elementsArr */
-
   function hideElements() {
     const elementsArr = [
       submitForm,

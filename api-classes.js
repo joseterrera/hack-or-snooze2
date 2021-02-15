@@ -1,10 +1,7 @@
-// const BASE_URL = "https://hack-or-snooze-v3.herokuapp.com";
-
 /**
  * This class maintains the list of individual Story instances
  *  It also has some methods for fetching, adding, and removing stories
  */
-
 class StoryList {
   constructor(stories) {
     this.stories = stories;
@@ -34,16 +31,6 @@ class StoryList {
     const storyList = new StoryList(stories);
     return storyList;
   }
-
-  /**
-   * Method to make a POST request to /stories and add the new story to the list
-   * - user - the current instance of User who will post the story
-   * - newStory - a new story object for the API with title, author, and url
-   *
-   * Returns the new story object
-   */
-
-
 /**
  *
  * Will return the newly created story which will be used in ui.js
@@ -69,7 +56,6 @@ class StoryList {
 
 
   async updateStory(User, story, storyId) {
-    // console.log({User,story},User.loginToken)
     let response = await axios.patch(`${BASE_URL}/stories/${storyId}`, {
 			token: User.loginToken,
 			story: story
@@ -86,10 +72,8 @@ class StoryList {
         token: user.loginToken
       },
     });
-
     // filter out the story whose ID we are removing
     this.stories = this.stories.filter(story => story.storyId !== storyId);
-
     // do the same thing for the user's list of stories
     user.ownStories = user.ownStories.filter(ownStory => ownStory.storyId !== storyId);
   }
@@ -100,7 +84,6 @@ class StoryList {
  * The User class to primarily represent the current user.
  *  There are helper methods to signup (create), login, and getLoggedInUser
  */
-
 class User {
   constructor(userObj) {
     this.username = userObj.username;
@@ -115,9 +98,7 @@ class User {
   }
 
   /* Create and return a new user.
-   *
    * Makes POST request to API and returns newly-created user.
-   *
    * - username: a new username
    * - password: a new password
    * - name: the user's full name
@@ -134,15 +115,12 @@ class User {
 
     // build a new User instance from the API response
     const newUser = new User(response.data.user);
-
     // attach the token to the newUser instance for convenience
     newUser.loginToken = response.data.token;
-
     return newUser;
   }
 
   /* Login in user and return user instance.
-
    * - username: an existing user's username
    * - password: an existing user's password
    */
@@ -177,7 +155,6 @@ class User {
   static async getLoggedInUser(token, username) {
     // if we don't have user info, return null
     if (!token || !username) return null;
-
     // call the API
     const response = await axios.get(`${BASE_URL}/users/${username}`, {
       params: {
@@ -187,10 +164,8 @@ class User {
 
     // instantiate the user from the API information
     const existingUser = new User(response.data.user);
-
     // attach the token to the newUser instance for convenience
     existingUser.loginToken = token;
-
     // instantiate Story instances for the user's favorites and ownStories
     existingUser.favorites = response.data.user.favorites.map(s => new Story(s));
     existingUser.ownStories = response.data.user.stories.map(s => new Story(s));
@@ -206,37 +181,14 @@ class User {
     this.name = response.data.user.name;
     this.createdAt = response.data.user.createdAt;
     this.updatedAt = response.data.user.updatedAt;
-
     this.favorites = response.data.user.favorites.map( s => new Story(s));
     this.ownStories = response.data.user.stories.map(s => new Story(s));
-    // console.log(response.data.user);
+
     return this;
 
   }
 
-  // async retrieveDetails() {
-  //   const response = await axios.get(`${BASE_URL}/users/${this.username}`, {
-  //     params: {
-  //       token: this.loginToken
-  //     }
-  //   });
-
-  //   // update all of the user's properties from the API response
-  //   this.name = response.data.user.name;
-  //   this.createdAt = response.data.user.createdAt;
-  //   this.updatedAt = response.data.user.updatedAt;
-
-  //   // remember to convert the user's favorites and ownStories into instances of Story
-  //   this.favorites = response.data.user.favorites.map(s => new Story(s));
-  //   this.ownStories = response.data.user.stories.map(s => new Story(s));
-
-  //   return this;
-  // }
-
-
-
   async removeFavorite(storyId) {
-    // const token = this.loginToken;
     await axios({
       url: `${BASE_URL}/users/${this.username}/favorites/${storyId}`,
       method: 'DELETE',
@@ -261,20 +213,16 @@ class User {
     await this.retrieveDetails();
     return this;
   }
-
 }
 
 /**
  * Class to represent a single story.
  */
-
 class Story {
-
   /**
    * The constructor is designed to take an object for better readability / flexibility
    * - storyObj: an object that has story properties in it
    */
-
   constructor(storyObj) {
     this.author = storyObj.author;
     this.title = storyObj.title;
@@ -284,20 +232,4 @@ class Story {
     this.createdAt = storyObj.createdAt;
     this.updatedAt = storyObj.updatedAt;
   }
-
-  // async update(user, storyData) {
-  //   const response = await axios({
-  //     url:`${BASE_URL}/stories/${this.storyId}`,
-  //     method: "PATCH",
-  //     data: {
-  //       token: user.loginToken,
-  //       story: storyData
-  //     }
-  //   });
-  //   const { author, title, url, updatedAt } = response.data.story;
-  //   this.author = author;
-  //   this.title = title,
-  //   this.url = url,
-  //   this.updatedAt = updatedAt
-  // }
 }
